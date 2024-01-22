@@ -5,12 +5,9 @@ impl Solution {
         let mut set = HashSet::new();
         for mail in emails {
             let x : Vec<&str> = mail.split("@").collect();
-            let receiver:Vec<&str> = x[0].split("+").collect();
-            let receiver:String = String::from_utf8(
-                receiver[0].as_bytes().iter()
-                    .map(|&x| {x})
-                    .filter(|&x| {x != b'.'})
-                    .collect()).unwrap();
+            let receiver = x[0].split("+")
+                .next().unwrap()
+                .replace(".", "");
             let mail = receiver + "@" + x[1];
             set.insert(mail);
         }
