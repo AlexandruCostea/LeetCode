@@ -1,8 +1,8 @@
-use std::collections::BTreeMap;
+use std::collections::BinaryHeap;
 
 struct KthLargest {
     k: i32,
-    nums: BTreeMap<i32, i32>,
+    nums: BinaryHeap<i32>,
 }
 
 impl KthLargest {
@@ -10,29 +10,27 @@ impl KthLargest {
     fn new(k: i32, nums: Vec<i32>) -> Self {
         let mut kth_largest = KthLargest {
             k,
-            nums: BTreeMap::new(),
+            nums: BinaryHeap::new(),
         };
         for num in nums {
-            *kth_largest.nums.entry(-1 * num).or_insert(0) += 1;
+            if kth_largest.nums.len() < kth_largest.k as usize {
+                kth_largest.nums.push(-1 * num);
+            } else if num * -1 < *kth_largest.nums.peek().unwrap() {
+                kth_largest.nums.push(num * -1);
+                kth_largest.nums.pop();
+            }
+
         }
         return kth_largest
     }
     
     fn add(&mut self, val: i32) -> i32 {
-        *self.nums.entry(-1 * val).or_insert(0) += 1;
-        let mut i = 0;
-        for elem in &self.nums {
-            i += elem.1;
-            if i >= self.k {
-                return elem.0 * -1;
-            }
+        if self.nums.len() < self.k as usize {
+            self.nums.push(-1 * val);
+        } else if val * -1 < *self.nums.peek().unwrap() {
+            self.nums.push(val * -1);
+            self.nums.pop();
         }
-        return 0
+        return self.nums.peek().unwrap() * -1;
     }
 }
-
-/**
- * Your KthLargest object will be instantiated and called as such:
- * let obj = KthLargest::new(k, nums);
- * let ret_1: i32 = obj.add(val);
- */
