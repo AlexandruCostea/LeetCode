@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+
 impl Solution {
     pub fn number_of_substrings(s: String) -> i32 {
         let mut sol: usize = 0;
@@ -9,16 +10,21 @@ impl Solution {
         let mut j: usize = 0;
         let mut prevj: usize = 0;
         let mut previ: usize = 0;
+        let mut found: bool;
 
         frequency.insert('a', 0);
         frequency.insert('b', 0);
         frequency.insert('c', 0);
 
         while i < word.len() {
-            println!("{j}");
+            found = true;
             while (*frequency.get(&'a').unwrap() == 0 || *frequency.get(&'b').unwrap() == 0 || *frequency.get(&'c').unwrap() == 0) && j < word.len() {
                 *frequency.entry(word[j]).or_default() += 1;
                 j += 1;
+            }
+
+            if *frequency.get(&'a').unwrap() == 0 || *frequency.get(&'b').unwrap() == 0 || *frequency.get(&'c').unwrap() == 0 {
+                found = false;
             }
 
             j -= 1;
@@ -40,7 +46,9 @@ impl Solution {
                 return sol as i32;
             }
 
-            sol += word.len() - j + 1;
+            if found {
+                sol += word.len() - j + 1;
+            }
             previ = i;
             prevj = j;
         }
